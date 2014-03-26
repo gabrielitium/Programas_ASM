@@ -1,0 +1,53 @@
+DATOS SEGMENT PARA 'DATA'
+        VECTOR DB 1,1,1,1,1,1,1,1,1,'$'
+        RESULTADO DB 0
+DATOS ENDS
+
+STACKSG SEGMENT PARA STACK 'STACK'
+        DW 20 DUP(0)
+STACKSG ENDS
+
+CODIGO SEGMENT PARA 'CODE'
+        ASSUME DS:DATOS,SS:STACKSG,CS:CODIGO
+BEGIN PROC FAR                
+        PUSH DS
+        XOR AX,AX
+        PUSH AX
+
+        MOV AX,DATOS
+        MOV DS,AX
+
+        MOV CL,0
+        MOV AL,0
+
+        LEA SI,VECTOR
+
+CICLO:  CMP CL,9
+        JE SALIR
+        MOV BL,[SI]
+        INC SI
+        INC CL
+        CMP BL,01H
+        JNE CICLO
+        ADD AL,01H
+        JMP CICLO
+SALIR:  NOP
+
+        MOV DL,AL
+        CALL IMPRIMIR ;LLAMADO A FUNCI„N
+
+        MOV AH,04CH
+        MOV AL,00H
+        INT 21H
+
+BEGIN ENDP
+
+IMPRIMIR PROC
+        ADD DL,30H
+        MOV AH,02H
+        INT 21H
+        RET
+IMPRIMIR ENDP
+
+CODIGO ENDS
+      END BEGIN

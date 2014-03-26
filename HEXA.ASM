@@ -1,0 +1,52 @@
+PAGE 60,132
+TITLE MUESTRA
+STACK SEGMENT PARA STACK 'PILA'
+        DW 64 DUP (0)
+STACK ENDS
+
+DSEG SEGMENT PARA PUBLIC 'DATOS'
+        CAD DB 00,00,00,00,00,00,'$'
+        NUM DW (0FFH)    ;NUM CONTIENE EL NUMERO A TRANSFORMAR
+                        ;EL NUMERO NO PUEDE SER MAYOR A 9F6,EN HEXADECIMAL
+                        ;EN DECIMAL 2550, SI FUERA MAYOR A ESA CANTIDAD
+                        ;PROVOCARIA DESBORDAMIENTO
+DSEG ENDS
+        CSEG SEGMENT PARA PUBLIC 'CODIGO'
+        ASSUME CS:CSEG, DS:DSEG,SS:STACK
+SUMA PROC FAR
+        PUSH DS
+        XOR AX,AX
+        PUSH AX
+
+        MOV AX,DSEG
+        MOV DS,AX
+        MOV SI,OFFSET CAD
+        ADD SI,05H
+
+        MOV AX,NUM
+        MOV BL,0AH
+CICLO:
+        CMP AX,0AH
+        JL FIN
+        DIV BL
+        ADD AH,30H
+        MOV CAD[SI],AH
+        DEC SI
+        MOV AH,0
+        JMP CICLO
+FIN:
+        ADD AL,30H
+        MOV CAD[SI],AL
+        NOP
+
+        MOV AH,09H
+        MOV DX,OFFSET CAD
+        INT 21H
+
+        MOV AH,4CH
+        MOV AL,00H
+        INT 21H
+SUMA    ENDP
+CSEG    ENDS
+        END SUMA
+

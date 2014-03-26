@@ -1,0 +1,9 @@
+
+ Start  Stop   Length Name               Class
+
+ 00000H 0001CH 0001DH DATOS              DATA
+ 00020H 00047H 00028H STACK              STACK
+ 00050H 0008DH 0003EH CODIGO             CODE
+
+Program entry point at 0005:0000
+

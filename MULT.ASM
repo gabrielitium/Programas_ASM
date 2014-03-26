@@ -1,0 +1,86 @@
+DATOS SEGMENT PARA 'DATA'
+        TIT DB 'MULTIPLICACION DE DOS VALORES DE 8 BITS',0AH,0DH,'$'
+        LET1 DB 'PRIMER  VALOR:  $'
+        LET2 DB 'SEGUNDO VALOR:  $'
+        LET3 DB 'RESULTADO: $'
+        LIN DB 0AH,0DH,'$'
+        DATO DW 00
+DATOS ENDS
+STACKSG SEGMENT PARA STACK 'STACK'
+
+STACKSG ENDS
+CODIGO SEGMENT PARA 'CODE'
+        ASSUME DS:DATOS,SS:STACKSG,CS:CODIGO
+BEGIN PROC FAR
+        PUSH DS
+        XOR AX,AX
+        PUSH AX
+        MOV AX,DATOS
+        MOV DS,AX
+          LEA BX,TIT
+          CALL IMPRIME ;LLAMADO A FUNCI‡N
+          LEA BX,LET1
+          CALL IMPRIME ;LLAMADO A FUNCION
+          MOV AH,01H
+          INT 21H
+          SUB AL,30H
+          MOV AH,00H
+          MOV DATO,AX
+
+          LEA BX,LIN
+          CALL IMPRIME ;LLAMADO A FUNCION
+          LEA BX,LET2
+          CALL IMPRIME
+          MOV AH,01H
+          INT 21H
+          SUB AL,30H
+          MUL DATO
+          MOV AH,00H
+
+          MOV BX,AX
+          MOV CX,0AH
+          MOV DX,0H
+
+CICLO:    CMP BX,CX
+          JGE INCREMENTO
+          ADD BX,DX
+          JMP SALIR
+
+INCREMENTO:ADD CX,0AH
+           ADD DX,06H
+           JMP CICLO
+SALIR:
+
+      MOV AX,BX
+      AND AL,0FH
+      MOV CL,4
+      SHR BL,CL
+      MOV BH,AL
+      PUSH BX
+      LEA BX,LIN
+      CALL IMPRIME ;LLAMADO A FUNCION
+      LEA BX,LET3
+      CALL IMPRIME ;LLAMADO A FUNCION
+
+      POP BX
+      ADD BL,30H
+      MOV AH,02H
+      MOV DL,BL
+      INT 21H
+      ADD BH,30H
+      MOV AH,02H
+      MOV DL,BH
+      INT 21H
+
+         MOV AH,04CH
+         MOV AL,00H
+         INT 21H
+BEGIN ENDP
+IMPRIME PROC
+    MOV AH,09H
+    MOV DX,BX
+    INT 21H
+    RET
+IMPRIME ENDP
+CODIGO ENDS
+        END BEGIN
